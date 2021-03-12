@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+  redis:
+    image: redis:latest
+  subscription_manager:
+    build: .
+    links:
+      - redis
+      - rabbitmq
+    environment:
+      REDIS_URL: 'redis://redis:6379/0'
+      RABBITMQ_URL: 'amqp://guest:guest@rabbitmq'
+      CATALOG_HOST: 'http://172.24.0.1:4567'
+    command:  bash -c 'bundle exec ruby initialize.rb'
